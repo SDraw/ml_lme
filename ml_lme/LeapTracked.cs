@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace ml_lme
@@ -86,11 +83,13 @@ namespace ml_lme
             set => m_player = value;
         }
 
+        [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
         public bool FingersOnly
         {
             set => m_fingersOnly = value;
         }
 
+        [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
         public bool Sdk3Parameters
         {
             set => m_updateParameters = value;
@@ -125,6 +124,7 @@ namespace ml_lme
             }
         }
 
+        [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
         public void UpdateFromGestures(GestureMatcher.GesturesData f_gesturesData)
         {
             if((m_parameters.Count != 0) && m_updateParameters)
@@ -193,6 +193,7 @@ namespace ml_lme
             }
         }
 
+        [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
         public void UpdateHandsPositions(GestureMatcher.GesturesData f_gesturesData, Transform f_left, Transform f_right)
         {
             if((m_ikSolverVR != null) && !m_fingersOnly)
@@ -243,6 +244,15 @@ namespace ml_lme
             m_ikSolverVR = m_player?.field_Private_VRC_AnimationController_0?.field_Private_VRIK_0?.solver;
 
             RebuildParameters();
+        }
+
+        public void ResetTracking()
+        {
+            if(m_handGestureController != null)
+            {
+                m_handGestureController.field_Internal_Boolean_0 = false;
+                m_handGestureController.field_Private_EnumNPublicSealedvaKeMoCoGaViOcViDaWaUnique_0 = VRCInputManager.EnumNPublicSealedvaKeMoCoGaViOcViDaWaUnique.Mouse;
+            }
         }
 
         void RebuildParameters()

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 namespace ml_lme
@@ -99,6 +98,8 @@ namespace ml_lme
             {
                 m_localTracked.FingersOnly = Settings.FingersTracking;
                 m_localTracked.Sdk3Parameters = Settings.SDK3Parameters;
+                if(!Settings.Enabled)
+                    m_localTracked.ResetTracking();
             }
         }
 
