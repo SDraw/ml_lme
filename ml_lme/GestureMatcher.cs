@@ -30,7 +30,7 @@
         readonly static UnityEngine.Vector3 gc_axisX = new UnityEngine.Vector3(1f, 0f, 0f);
         readonly static UnityEngine.Vector3 gc_axisXN = new UnityEngine.Vector3(-1f, 0f, 0f);
 
-        public static void GetGestures(ref Leap.Frame f_frame, ref GesturesData f_data)
+        public static void GetGestures(Leap.Frame f_frame, ref GesturesData f_data)
         {
             // Fill as default
             for(int i = 0; i < GesturesData.gc_handCount; i++)
