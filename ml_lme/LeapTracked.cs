@@ -111,13 +111,13 @@ namespace ml_lme
                     switch(l_param.m_valueType)
                     {
                         case VRC.Playables.AvatarParameter.EnumNPublicSealedvaUnBoInFl5vUnique.Bool:
-                            MethodsResolver.SetAvatarBoolParam?.Invoke(m_playableController, new object[] { l_param.m_paramHash, l_param.m_boolValue });
+                            m_playableController.SetAvatarBoolParamEx(l_param.m_paramHash, l_param.m_boolValue);
                             break;
                         case VRC.Playables.AvatarParameter.EnumNPublicSealedvaUnBoInFl5vUnique.Float:
-                            MethodsResolver.SetAvatarFloatParam?.Invoke(m_playableController, new object[] { l_param.m_paramHash, l_param.m_floatValue, false });
+                            m_playableController.SetAvatarFloatParamEx(l_param.m_paramHash, l_param.m_floatValue);
                             break;
                         case VRC.Playables.AvatarParameter.EnumNPublicSealedvaUnBoInFl5vUnique.Int:
-                            MethodsResolver.SetAvatarIntParam?.Invoke(m_playableController, new object[] { l_param.m_paramHash, l_param.m_intValue });
+                            m_playableController.SetAvatarIntParamEx(l_param.m_paramHash, l_param.m_intValue);
                             break;
                     }
                 }
@@ -143,7 +143,7 @@ namespace ml_lme
                         case CustomParameterType.LeftHandMiddleCurl:
                         case CustomParameterType.LeftHandRingCurl:
                         case CustomParameterType.LeftHandPinkyCurl:
-                            l_param.m_floatValue = f_gesturesData.m_leftFingersBends[(int)l_param.m_parameterType -(int)CustomParameterType.LeftHandThumbCurl];
+                            l_param.m_floatValue = f_gesturesData.m_leftFingersBends[(int)l_param.m_parameterType - (int)CustomParameterType.LeftHandThumbCurl];
                             break;
 
                         case CustomParameterType.RightHandThumbCurl:

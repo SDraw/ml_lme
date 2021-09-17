@@ -13,5 +13,22 @@
             lhs = rhs;
             rhs = temp;
         }
+
+        // Extensions
+        public static void SetAvatarIntParamEx(this AvatarPlayableController controller, int paramHash, int val)
+        {
+            MethodsResolver.SetAvatarIntParam?.Invoke(controller, new object[] { paramHash, val });
+            controller.field_Private_Boolean_3 = true; // bool requiresNetworkSync;
+        }
+        public static void SetAvatarBoolParamEx(this AvatarPlayableController controller, int paramHash, bool val)
+        {
+            MethodsResolver.SetAvatarBoolParam?.Invoke(controller, new object[] { paramHash, val });
+            controller.field_Private_Boolean_3 = true; // bool requiresNetworkSync;
+        }
+        public static void SetAvatarFloatParamEx(this AvatarPlayableController controller, int paramHash, float val, bool debug = false)
+        {
+            MethodsResolver.SetAvatarFloatParam?.Invoke(controller, new object[] { paramHash, val, debug });
+            controller.field_Private_Boolean_3 = true; // bool requiresNetworkSync;
+        }
     }
 }
