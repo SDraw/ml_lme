@@ -1,6 +1,6 @@
 ﻿namespace ml_lme
 { 
-    class Settings
+    static class Settings
     {
         static bool ms_enabled = false;
         static bool ms_leapHmdMode = false;

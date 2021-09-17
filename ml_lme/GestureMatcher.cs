@@ -1,6 +1,6 @@
 ﻿namespace ml_lme
 {
-    class GestureMatcher
+    static class GestureMatcher
     {
         public class GesturesData
         {

@@ -2,7 +2,7 @@
 
 namespace ml_lme
 {
-    public static class MethodsResolver
+    static class MethodsResolver
     {
         static System.Reflection.MethodInfo ms_isInVR = null;
         static System.Reflection.MethodInfo ms_setAvatarIntParam = null;

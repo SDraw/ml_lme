@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace ml_lme
 {
-    class DependenciesHandler
+    static class DependenciesHandler
     {
         static readonly List<string> ms_libraries = new List<string>()
         {
