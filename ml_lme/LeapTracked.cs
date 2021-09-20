@@ -10,21 +10,21 @@ namespace ml_lme
         {
             "_LeftHandPresent",
             "_RightHandPresent",
-            "_LeftHandThumbCurl",
-            "_LeftHandIndexCurl",
-            "_LeftHandMiddleCurl",
-            "_LeftHandRingCurl",
-            "_LeftHandPinkyCurl",
+            "_LeftHandThumbBend",
+            "_LeftHandIndexBend",
+            "_LeftHandMiddleBend",
+            "_LeftHandRingBend",
+            "_LeftHandPinkyBend",
             "_LeftHandThumbSpread",
             "_LeftHandIndexSpread",
             "_LeftHandMiddleSpread",
             "_LeftHandRingSpread",
             "_LeftHandPinkySpread",
-            "_RightHandThumbCurl",
-            "_RightHandIndexCurl",
-            "_RightHandMiddleCurl",
-            "_RightHandRingCurl",
-            "_RightHandPinkyCurl",
+            "_RightHandThumbBend",
+            "_RightHandIndexBend",
+            "_RightHandMiddleBend",
+            "_RightHandRingBend",
+            "_RightHandPinkyBend",
             "_RightHandThumbSpread",
             "_RightHandIndexSpread",
             "_RightHandMiddleSpread",
@@ -35,21 +35,21 @@ namespace ml_lme
         {
             LeftHandPresent,
             RightHandPresent,
-            LeftHandThumbCurl,
-            LeftHandIndexCurl,
-            LeftHandMiddleCurl,
-            LeftHandRingCurl,
-            LeftHandPinkyCurl,
+            LeftHandThumbBend,
+            LeftHandIndexBend,
+            LeftHandMiddleBend,
+            LeftHandRingBend,
+            LeftHandPinkyBend,
             LeftHandThumbSpread,
             LeftHandIndexSpread,
             LeftHandMiddleSpread,
             LeftHandRingSpread,
             LeftHandPinkySpread,
-            RightHandThumbCurl,
-            RightHandIndexCurl,
-            RightHandMiddleCurl,
-            RightHandRingCurl,
-            RightHandPinkyCurl,
+            RightHandThumbBend,
+            RightHandIndexBend,
+            RightHandMiddleBend,
+            RightHandRingBend,
+            RightHandPinkyBend,
             RightHandThumbSpread,
             RightHandIndexSpread,
             RightHandMiddleSpread,
@@ -138,20 +138,20 @@ namespace ml_lme
                             l_param.m_boolValue = f_gesturesData.m_handsPresenses[(int)l_param.m_parameterType];
                             break;
 
-                        case CustomParameterType.LeftHandThumbCurl:
-                        case CustomParameterType.LeftHandIndexCurl:
-                        case CustomParameterType.LeftHandMiddleCurl:
-                        case CustomParameterType.LeftHandRingCurl:
-                        case CustomParameterType.LeftHandPinkyCurl:
-                            l_param.m_floatValue = f_gesturesData.m_leftFingersBends[(int)l_param.m_parameterType - (int)CustomParameterType.LeftHandThumbCurl];
+                        case CustomParameterType.LeftHandThumbBend:
+                        case CustomParameterType.LeftHandIndexBend:
+                        case CustomParameterType.LeftHandMiddleBend:
+                        case CustomParameterType.LeftHandRingBend:
+                        case CustomParameterType.LeftHandPinkyBend:
+                            l_param.m_floatValue = f_gesturesData.m_leftFingersBends[(int)l_param.m_parameterType - (int)CustomParameterType.LeftHandThumbBend];
                             break;
 
-                        case CustomParameterType.RightHandThumbCurl:
-                        case CustomParameterType.RightHandIndexCurl:
-                        case CustomParameterType.RightHandMiddleCurl:
-                        case CustomParameterType.RightHandRingCurl:
-                        case CustomParameterType.RightHandPinkyCurl:
-                            l_param.m_floatValue = f_gesturesData.m_rightFingersBends[(int)l_param.m_parameterType - (int)CustomParameterType.RightHandThumbCurl];
+                        case CustomParameterType.RightHandThumbBend:
+                        case CustomParameterType.RightHandIndexBend:
+                        case CustomParameterType.RightHandMiddleBend:
+                        case CustomParameterType.RightHandRingBend:
+                        case CustomParameterType.RightHandPinkyBend:
+                            l_param.m_floatValue = f_gesturesData.m_rightFingersBends[(int)l_param.m_parameterType - (int)CustomParameterType.RightHandThumbBend];
                             break;
 
                         case CustomParameterType.LeftHandThumbSpread:
@@ -185,7 +185,7 @@ namespace ml_lme
                         for(int j = 0; j < 5; j++)
                         {
                             int l_dataIndex = i * 5 + j;
-                            m_handGestureController.field_Private_ArrayOf_VRCInput_0[l_dataIndex].field_Public_Single_0 = 1.0f - ((i == 0) ? f_gesturesData.m_leftFingersBends[j] : f_gesturesData.m_rightFingersBends[j]); // Curl
+                            m_handGestureController.field_Private_ArrayOf_VRCInput_0[l_dataIndex].field_Public_Single_0 = 1.0f - ((i == 0) ? f_gesturesData.m_leftFingersBends[j] : f_gesturesData.m_rightFingersBends[j]); // Bend
                             m_handGestureController.field_Private_ArrayOf_VRCInput_1[l_dataIndex].field_Public_Single_0 = ((i == 0) ? f_gesturesData.m_leftFingersSpreads[j] : f_gesturesData.m_rightFingersSpreads[j]); // Spread
                         }
                     }
@@ -226,7 +226,7 @@ namespace ml_lme
                         for(int j = 0; j < 5; j++)
                         {
                             int l_dataIndex = i * 5 + j;
-                            m_handGestureController.field_Private_ArrayOf_VRCInput_0[l_dataIndex].field_Public_Single_0 = 1.0f - ((i == 0) ? f_gesturesData.m_leftFingersBends[j] : f_gesturesData.m_rightFingersBends[j]); // Curl
+                            m_handGestureController.field_Private_ArrayOf_VRCInput_0[l_dataIndex].field_Public_Single_0 = 1.0f - ((i == 0) ? f_gesturesData.m_leftFingersBends[j] : f_gesturesData.m_rightFingersBends[j]); // Bend
                             m_handGestureController.field_Private_ArrayOf_VRCInput_1[l_dataIndex].field_Public_Single_0 = ((i == 0) ? f_gesturesData.m_leftFingersSpreads[j] : f_gesturesData.m_rightFingersSpreads[j]); // Spread
                         }
                     }
