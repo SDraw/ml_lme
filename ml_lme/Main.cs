@@ -44,7 +44,7 @@ namespace ml_lme
         {
             // Create game objects
             m_leapTrackingRoot = new GameObject("LeapTrackingRoot");
-            m_leapTrackingRoot.transform.parent = Utils.GetVRCTrackingManager().gameObject.transform;
+            m_leapTrackingRoot.transform.parent = Utils.GetVRCTrackingManager().transform;
             UnityEngine.Object.DontDestroyOnLoad(m_leapTrackingRoot);
 
             m_leapLeftHand = new GameObject("LeapLeftHand");
@@ -89,7 +89,7 @@ namespace ml_lme
             // Update tracking transforms
             if(m_leapTrackingRoot != null)
             {
-                m_leapTrackingRoot.transform.parent = (Settings.HeadRoot ? Utils.GetCamera().gameObject.transform : Utils.GetVRCTrackingManager().gameObject.transform);
+                m_leapTrackingRoot.transform.parent = (Settings.HeadRoot ? Utils.GetCamera().transform : Utils.GetVRCTrackingManager().transform);
                 m_leapTrackingRoot.transform.localPosition = new Vector3(0f, (Settings.HeadRoot ? Settings.HmdOffsetY : Settings.DesktopOffsetY), (Settings.HeadRoot ? Settings.HmdOffsetZ : Settings.DesktopOffsetZ));
                 m_leapTrackingRoot.transform.localRotation = Quaternion.identity;
             }
