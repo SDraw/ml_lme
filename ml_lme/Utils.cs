@@ -5,7 +5,7 @@
         public static VRC.Player GetLocalPlayer() => VRC.Player.prop_Player_0;
         public static VRCTrackingManager GetVRCTrackingManager() => VRCTrackingManager.field_Private_Static_VRCTrackingManager_0;
         public static VRCTrackingSteam GetVRCTrackingSteam() => GetVRCTrackingManager().field_Private_List_1_VRCTracking_0[0].TryCast<VRCTrackingSteam>();
-        public static SteamVR_Camera GetCamera() => GetVRCTrackingSteam().prop_SteamVR_Camera_0;
+        public static SteamVR_Camera GetCamera() => GetVRCTrackingSteam().field_Private_SteamVR_Camera_0;
 
         public static void Swap<T>(ref T lhs, ref T rhs)
         {
