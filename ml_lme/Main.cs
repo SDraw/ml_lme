@@ -7,12 +7,13 @@ namespace ml_lme
     {
         static readonly Quaternion gs_hmdRotationFix = new Quaternion(0f, 0.7071068f, 0.7071068f, 0f);
 
+        bool m_quit = false;
+
         Leap.Controller m_leapController = null;
         GestureMatcher.GesturesData m_gesturesData = null;
 
         GameObject m_leapTrackingRoot = null;
-        GameObject m_leapLeftHand = null;
-        GameObject m_leapRightHand = null;
+        GameObject[] m_leapHands = null;
 
         LeapTracked m_localTracked = null;
 
@@ -26,6 +27,7 @@ namespace ml_lme
 
             m_leapController = new Leap.Controller();
             m_gesturesData = new GestureMatcher.GesturesData();
+            m_leapHands = new GameObject[GestureMatcher.GesturesData.gc_handCount];
 
             // Events
             VRChatUtilityKit.Utilities.VRCUtils.OnUiManagerInit += this.OnUiManagerInit;
@@ -45,21 +47,22 @@ namespace ml_lme
             // Create game objects
             m_leapTrackingRoot = new GameObject("LeapTrackingRoot");
             m_leapTrackingRoot.transform.parent = Utils.GetVRCTrackingManager().transform;
-            UnityEngine.Object.DontDestroyOnLoad(m_leapTrackingRoot);
+            Object.DontDestroyOnLoad(m_leapTrackingRoot);
 
-            m_leapLeftHand = new GameObject("LeapLeftHand");
-            m_leapLeftHand.transform.parent = m_leapTrackingRoot.transform;
-            UnityEngine.Object.DontDestroyOnLoad(m_leapLeftHand);
-
-            m_leapRightHand = new GameObject("LeapRightHand");
-            m_leapRightHand.transform.parent = m_leapTrackingRoot.transform;
-            UnityEngine.Object.DontDestroyOnLoad(m_leapRightHand);
+            for(int i = 0; i < GestureMatcher.GesturesData.gc_handCount; i++)
+            {
+                m_leapHands[i] = new GameObject("LeapHand" + i);
+                m_leapHands[i].transform.parent = m_leapTrackingRoot.transform;
+                Object.DontDestroyOnLoad(m_leapHands[i]);
+            }
 
             OnPreferencesSaved();
         }
 
         public override void OnApplicationQuit()
         {
+            m_quit = true;
+
             m_leapTrackingRoot = null;
             m_localTracked = null;
 
@@ -70,36 +73,39 @@ namespace ml_lme
 
         public override void OnPreferencesSaved()
         {
-            Settings.ReloadSettings();
-
-            // Update Leap controller
-            if(m_leapController != null)
+            if(!m_quit) // This is not a joke
             {
-                if(Settings.Enabled)
-                    m_leapController.StartConnection();
-                else
-                    m_leapController.StopConnection();
+                Settings.ReloadSettings();
 
-                if(Settings.LeapHmdMode)
-                    m_leapController.SetPolicy(Leap.Controller.PolicyFlag.POLICY_OPTIMIZE_HMD);
-                else
-                    m_leapController.ClearPolicy(Leap.Controller.PolicyFlag.POLICY_OPTIMIZE_HMD);
-            }
+                // Update Leap controller
+                if(m_leapController != null)
+                {
+                    if(Settings.Enabled)
+                        m_leapController.StartConnection();
+                    else
+                        m_leapController.StopConnection();
 
-            // Update tracking transforms
-            if(m_leapTrackingRoot != null)
-            {
-                m_leapTrackingRoot.transform.parent = (Settings.HeadRoot ? Utils.GetCamera().transform : Utils.GetVRCTrackingManager().transform);
-                m_leapTrackingRoot.transform.localPosition = new Vector3(0f, (Settings.HeadRoot ? Settings.HmdOffsetY : Settings.DesktopOffsetY), (Settings.HeadRoot ? Settings.HmdOffsetZ : Settings.DesktopOffsetZ));
-                m_leapTrackingRoot.transform.localRotation = Quaternion.identity;
-            }
+                    if(Settings.LeapHmdMode)
+                        m_leapController.SetPolicy(Leap.Controller.PolicyFlag.POLICY_OPTIMIZE_HMD);
+                    else
+                        m_leapController.ClearPolicy(Leap.Controller.PolicyFlag.POLICY_OPTIMIZE_HMD);
+                }
 
-            if(m_localTracked != null)
-            {
-                m_localTracked.FingersOnly = Settings.FingersTracking;
-                m_localTracked.Sdk3Parameters = Settings.SDK3Parameters;
-                if(!Settings.Enabled)
-                    m_localTracked.ResetTracking();
+                // Update tracking transforms
+                if(m_leapTrackingRoot != null)
+                {
+                    m_leapTrackingRoot.transform.parent = (Settings.HeadRoot ? Utils.GetCamera().transform : Utils.GetVRCTrackingManager().transform);
+                    m_leapTrackingRoot.transform.localPosition = new Vector3(0f, (Settings.HeadRoot ? Settings.HmdOffsetY : Settings.DesktopOffsetY), (Settings.HeadRoot ? Settings.HmdOffsetZ : Settings.DesktopOffsetZ));
+                    m_leapTrackingRoot.transform.localRotation = Quaternion.identity;
+                }
+
+                if(m_localTracked != null)
+                {
+                    m_localTracked.FingersOnly = Settings.FingersTracking;
+                    m_localTracked.Sdk3Parameters = Settings.SDK3Parameters;
+                    if(!Settings.Enabled)
+                        m_localTracked.ResetTracking();
+                }
             }
         }
 
@@ -114,22 +120,16 @@ namespace ml_lme
                     m_localTracked?.UpdateFromGestures(m_gesturesData);
 
                     // Update transforms
-                    if(m_gesturesData.m_handsPresenses[0] && (m_leapLeftHand != null))
+                    for(int i = 0; i < GestureMatcher.GesturesData.gc_handCount; i++)
                     {
-                        Vector3 l_pos = m_gesturesData.m_handsPositons[0];
-                        Quaternion l_rot = m_gesturesData.m_handsRotations[0];
-                        ReorientateLeapToUnity(ref l_pos, ref l_rot);
-                        m_leapLeftHand.transform.localPosition = l_pos;
-                        m_leapLeftHand.transform.localRotation = l_rot;
-                    }
-
-                    if(m_gesturesData.m_handsPresenses[1] && (m_leapRightHand != null))
-                    {
-                        Vector3 l_pos = m_gesturesData.m_handsPositons[1];
-                        Quaternion l_rot = m_gesturesData.m_handsRotations[1];
-                        ReorientateLeapToUnity(ref l_pos, ref l_rot);
-                        m_leapRightHand.transform.localPosition = l_pos;
-                        m_leapRightHand.transform.localRotation = l_rot;
+                        if(m_gesturesData.m_handsPresenses[i] && (m_leapHands[i] != null))
+                        {
+                            Vector3 l_pos = m_gesturesData.m_handsPositons[0];
+                            Quaternion l_rot = m_gesturesData.m_handsRotations[0];
+                            ReorientateLeapToUnity(ref l_pos, ref l_rot);
+                            m_leapHands[i].transform.localPosition = l_pos;
+                            m_leapHands[i].transform.localRotation = l_rot;
+                        }
                     }
                 }
             }
@@ -139,7 +139,7 @@ namespace ml_lme
         {
             if(Settings.Enabled && (m_localTracked != null))
             {
-                m_localTracked.UpdateHandsPositions(m_gesturesData, m_leapLeftHand.transform, m_leapRightHand.transform);
+                m_localTracked.UpdateHandsPositions(m_gesturesData, m_leapHands[0].transform, m_leapHands[1].transform);
             }
         }
 
