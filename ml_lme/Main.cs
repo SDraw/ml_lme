@@ -124,8 +124,8 @@ namespace ml_lme
                     {
                         if(m_gesturesData.m_handsPresenses[i] && (m_leapHands[i] != null))
                         {
-                            Vector3 l_pos = m_gesturesData.m_handsPositons[0];
-                            Quaternion l_rot = m_gesturesData.m_handsRotations[0];
+                            Vector3 l_pos = m_gesturesData.m_handsPositons[i];
+                            Quaternion l_rot = m_gesturesData.m_handsRotations[i];
                             ReorientateLeapToUnity(ref l_pos, ref l_rot);
                             m_leapHands[i].transform.localPosition = l_pos;
                             m_leapHands[i].transform.localRotation = l_rot;
