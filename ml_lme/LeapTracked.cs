@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace ml_lme
 {
+    [MelonLoader.RegisterTypeInIl2Cpp]
     class LeapTracked : MonoBehaviour
     {
         static readonly string[] gs_parameterNames =
@@ -57,6 +58,12 @@ namespace ml_lme
             RightHandPinkySpread
         }
 
+        enum TrackingMode
+        {
+            Generic = 0,
+            FBT
+        }
+
         // Struct would be better, but it's not C++
         class CustomParameter
         {
@@ -71,7 +78,9 @@ namespace ml_lme
         VRCPlayer m_player = null;
         AvatarPlayableController m_playableController = null;
         HandGestureController m_handGestureController = null;
-        RootMotion.FinalIK.IKSolverVR m_ikSolverVR = null;
+        RootMotion.FinalIK.IKSolverVR m_solver = null;
+        RootMotion.FinalIK.FullBodyBipedIK m_fbtIK = null;
+        TrackingMode m_trackigMode = TrackingMode.Generic;
 
         List<CustomParameter> m_parameters = null;
 
@@ -104,6 +113,13 @@ namespace ml_lme
 
         void Update()
         {
+            m_trackigMode = TrackingMode.Generic;
+            if(m_fbtIK != null)
+            {
+                if(m_fbtIK.enabled)
+                    m_trackigMode = TrackingMode.FBT;
+            }
+
             if((m_playableController != null) && (m_parameters.Count != 0) && m_updateParameters)
             {
                 foreach(var l_param in m_parameters)
@@ -196,22 +212,49 @@ namespace ml_lme
         [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
         public void UpdateHandsPositions(GestureMatcher.GesturesData f_gesturesData, Transform f_left, Transform f_right)
         {
-            if((m_ikSolverVR != null) && !m_fingersOnly)
+            if(!m_fingersOnly)
             {
-                if(f_gesturesData.m_handsPresenses[0] && (m_ikSolverVR.leftArm != null) && (m_ikSolverVR.leftArm.target != null))
+                switch(m_trackigMode)
                 {
-                    m_ikSolverVR.leftArm.positionWeight = 1f;
-                    m_ikSolverVR.leftArm.rotationWeight = 1f;
-                    m_ikSolverVR.leftArm.target.position = f_left.position;
-                    m_ikSolverVR.leftArm.target.rotation = f_left.rotation;
-                }
+                    case TrackingMode.Generic:
+                    {
+                        if(f_gesturesData.m_handsPresenses[0] && (m_solver?.leftArm != null) && (m_solver?.leftArm.target != null))
+                        {
+                            m_solver.leftArm.positionWeight = 1f;
+                            m_solver.leftArm.rotationWeight = 1f;
+                            m_solver.leftArm.target.position = f_left.position;
+                            m_solver.leftArm.target.rotation = f_left.rotation;
+                        }
 
-                if(f_gesturesData.m_handsPresenses[1] && (m_ikSolverVR.rightArm != null) && (m_ikSolverVR.rightArm.target != null))
-                {
-                    m_ikSolverVR.rightArm.positionWeight = 1f;
-                    m_ikSolverVR.rightArm.rotationWeight = 1f;
-                    m_ikSolverVR.rightArm.target.position = f_right.position;
-                    m_ikSolverVR.rightArm.target.rotation = f_right.rotation;
+                        if(f_gesturesData.m_handsPresenses[1] && (m_solver?.rightArm != null) && (m_solver?.rightArm.target != null))
+                        {
+                            m_solver.rightArm.positionWeight = 1f;
+                            m_solver.rightArm.rotationWeight = 1f;
+                            m_solver.rightArm.target.position = f_right.position;
+                            m_solver.rightArm.target.rotation = f_right.rotation;
+                        }
+                    }
+                    break;
+
+                    case TrackingMode.FBT:
+                    {
+                        if(f_gesturesData.m_handsPresenses[0] && (m_fbtIK?.solver?.leftHandEffector != null))
+                        {
+                            m_fbtIK.solver.leftHandEffector.position = f_left.position;
+                            m_fbtIK.solver.leftHandEffector.rotation = f_left.rotation;
+                            m_fbtIK.solver.leftHandEffector.target.position = f_left.position;
+                            m_fbtIK.solver.leftHandEffector.target.rotation = f_left.rotation;
+                        }
+
+                        if(f_gesturesData.m_handsPresenses[1] && (m_fbtIK?.solver?.rightHandEffector != null))
+                        {
+                            m_fbtIK.solver.rightHandEffector.position = f_right.position;
+                            m_fbtIK.solver.rightHandEffector.rotation = f_right.rotation;
+                            m_fbtIK.solver.rightHandEffector.target.position = f_right.position;
+                            m_fbtIK.solver.rightHandEffector.target.rotation = f_right.rotation;
+                        }
+                    }
+                    break;
                 }
             }
 
@@ -241,7 +284,8 @@ namespace ml_lme
             m_playableController = null;
 
             m_handGestureController = m_player?.field_Private_VRC_AnimationController_0?.field_Private_HandGestureController_0;
-            m_ikSolverVR = m_player?.field_Private_VRC_AnimationController_0?.field_Private_VRIK_0?.solver;
+            m_solver = m_player?.field_Private_VRC_AnimationController_0?.field_Private_VRIK_0?.solver;
+            m_fbtIK = m_player?.field_Private_VRC_AnimationController_0?.field_Private_FullBodyBipedIK_0;
 
             RebuildParameters();
         }

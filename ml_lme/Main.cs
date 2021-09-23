@@ -19,8 +19,6 @@ namespace ml_lme
 
         public override void OnApplicationStart()
         {
-            UnhollowerRuntimeLib.ClassInjector.RegisterTypeInIl2Cpp<LeapTracked>();
-
             DependenciesHandler.ExtractDependencies();
             MethodsResolver.ResolveMethods();
             Settings.LoadSettings();
