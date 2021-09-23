@@ -115,7 +115,8 @@ namespace ml_lme
                 if(l_frame != null)
                 {
                     GestureMatcher.GetGestures(l_frame, ref m_gesturesData);
-                    m_localTracked?.UpdateFromGestures(m_gesturesData);
+                    if(m_localTracked != null)
+                        m_localTracked.UpdateFromGestures(m_gesturesData);
 
                     // Update transforms
                     for(int i = 0; i < GestureMatcher.GesturesData.gc_handCount; i++)
@@ -147,10 +148,9 @@ namespace ml_lme
         }
         System.Collections.IEnumerator CreateLocalTracked()
         {
-            while(Utils.GetLocalPlayer()?.prop_VRCPlayer_0 == null)
+            while(Utils.GetLocalPlayer() == null)
                 yield return null;
-            m_localTracked = Utils.GetLocalPlayer().prop_VRCPlayer_0.gameObject.AddComponent<LeapTracked>();
-            m_localTracked.Player = Utils.GetLocalPlayer().prop_VRCPlayer_0;
+            m_localTracked = Utils.GetLocalPlayer().gameObject.AddComponent<LeapTracked>();
             m_localTracked.FingersOnly = Settings.FingersTracking;
             m_localTracked.Sdk3Parameters = Settings.SDK3Parameters;
 
@@ -169,13 +169,11 @@ namespace ml_lme
 
         void OnAvatarInstantiated(VRCAvatarManager f_avatarManager, VRC.Core.ApiAvatar f_apiAvatar, GameObject f_avatarObject)
         {
-            var l_player = f_avatarObject?.transform?.root?.GetComponentInChildren<VRC.Player>();
-            if(l_player != null)
+            var l_player = f_avatarObject.transform.root.GetComponent<VRCPlayer>();
+            if((l_player != null) && (l_player == Utils.GetLocalPlayer()))
             {
-                if(l_player == Utils.GetLocalPlayer())
-                {
-                    m_localTracked?.ResetParameters();
-                }
+                if(m_localTracked != null)
+                    m_localTracked.ResetParameters();
             }
         }
 
@@ -196,7 +194,8 @@ namespace ml_lme
 
         static bool VRCIM_ControllersType(ref bool __result, VRCInputManager.EnumNPublicSealedvaKeMoCoGaViOcViDaWaUnique __0)
         {
-            if(Settings.Enabled && (bool)MethodsResolver.IsInVR?.Invoke(null, null)) // Need to account presence of VR controllers
+            // Need to account presence of VR controllers to allow mouse input for controler-less VR
+            if(Settings.Enabled && (bool)MethodsResolver.IsInVR?.Invoke(null, null))
             {
                 if(__0 == VRCInputManager.EnumNPublicSealedvaKeMoCoGaViOcViDaWaUnique.Index)
                 {

@@ -87,11 +87,6 @@ namespace ml_lme
         bool m_fingersOnly = false;
         bool m_updateParameters = false;
 
-        public VRCPlayer Player
-        {
-            set => m_player = value;
-        }
-
         [UnhollowerBaseLib.Attributes.HideFromIl2Cpp]
         public bool FingersOnly
         {
@@ -108,6 +103,7 @@ namespace ml_lme
 
         void Awake()
         {
+            m_player = this.GetComponent<VRCPlayer>();
             m_parameters = new List<CustomParameter>();
         }
 
@@ -218,7 +214,7 @@ namespace ml_lme
                 {
                     case TrackingMode.Generic:
                     {
-                        if(f_gesturesData.m_handsPresenses[0] && (m_solver?.leftArm != null) && (m_solver?.leftArm.target != null))
+                        if(f_gesturesData.m_handsPresenses[0] && (m_solver?.leftArm?.target != null))
                         {
                             m_solver.leftArm.positionWeight = 1f;
                             m_solver.leftArm.rotationWeight = 1f;
@@ -226,7 +222,7 @@ namespace ml_lme
                             m_solver.leftArm.target.rotation = f_left.rotation;
                         }
 
-                        if(f_gesturesData.m_handsPresenses[1] && (m_solver?.rightArm != null) && (m_solver?.rightArm.target != null))
+                        if(f_gesturesData.m_handsPresenses[1] && (m_solver?.rightArm?.target != null))
                         {
                             m_solver.rightArm.positionWeight = 1f;
                             m_solver.rightArm.rotationWeight = 1f;
@@ -238,20 +234,23 @@ namespace ml_lme
 
                     case TrackingMode.FBT:
                     {
-                        if(f_gesturesData.m_handsPresenses[0] && (m_fbtIK?.solver?.leftHandEffector != null))
+                        if(m_fbtIK != null)
                         {
-                            m_fbtIK.solver.leftHandEffector.position = f_left.position;
-                            m_fbtIK.solver.leftHandEffector.rotation = f_left.rotation;
-                            m_fbtIK.solver.leftHandEffector.target.position = f_left.position;
-                            m_fbtIK.solver.leftHandEffector.target.rotation = f_left.rotation;
-                        }
+                            if(f_gesturesData.m_handsPresenses[0] && (m_fbtIK.solver?.leftHandEffector != null))
+                            {
+                                m_fbtIK.solver.leftHandEffector.position = f_left.position;
+                                m_fbtIK.solver.leftHandEffector.rotation = f_left.rotation;
+                                m_fbtIK.solver.leftHandEffector.target.position = f_left.position;
+                                m_fbtIK.solver.leftHandEffector.target.rotation = f_left.rotation;
+                            }
 
-                        if(f_gesturesData.m_handsPresenses[1] && (m_fbtIK?.solver?.rightHandEffector != null))
-                        {
-                            m_fbtIK.solver.rightHandEffector.position = f_right.position;
-                            m_fbtIK.solver.rightHandEffector.rotation = f_right.rotation;
-                            m_fbtIK.solver.rightHandEffector.target.position = f_right.position;
-                            m_fbtIK.solver.rightHandEffector.target.rotation = f_right.rotation;
+                            if(f_gesturesData.m_handsPresenses[1] && (m_fbtIK.solver?.rightHandEffector != null))
+                            {
+                                m_fbtIK.solver.rightHandEffector.position = f_right.position;
+                                m_fbtIK.solver.rightHandEffector.rotation = f_right.rotation;
+                                m_fbtIK.solver.rightHandEffector.target.position = f_right.position;
+                                m_fbtIK.solver.rightHandEffector.target.rotation = f_right.rotation;
+                            }
                         }
                     }
                     break;
@@ -283,9 +282,12 @@ namespace ml_lme
             m_parameters.Clear();
             m_playableController = null;
 
-            m_handGestureController = m_player?.field_Private_VRC_AnimationController_0?.field_Private_HandGestureController_0;
-            m_solver = m_player?.field_Private_VRC_AnimationController_0?.field_Private_VRIK_0?.solver;
-            m_fbtIK = m_player?.field_Private_VRC_AnimationController_0?.field_Private_FullBodyBipedIK_0;
+            m_handGestureController = m_player.field_Private_VRC_AnimationController_0.field_Private_HandGestureController_0;
+            if(m_player.field_Private_VRC_AnimationController_0.field_Private_VRIK_0 != null)
+                m_solver = m_player.field_Private_VRC_AnimationController_0.field_Private_VRIK_0.solver;
+            else
+                m_solver = null; // Generic avatar
+            m_fbtIK = m_player.field_Private_VRC_AnimationController_0.field_Private_FullBodyBipedIK_0;
 
             RebuildParameters();
         }
@@ -301,7 +303,7 @@ namespace ml_lme
 
         void RebuildParameters()
         {
-            m_playableController = m_player?.field_Private_AnimatorControllerManager_0?.field_Private_AvatarAnimParamController_0?.field_Private_AvatarPlayableController_0;
+            m_playableController = m_player.field_Private_AnimatorControllerManager_0.field_Private_AvatarAnimParamController_0.field_Private_AvatarPlayableController_0;
             if(m_playableController != null)
             {
                 foreach(var l_param in m_playableController.field_Private_ArrayOf_ObjectNPublicInObInPaInUnique_0)
