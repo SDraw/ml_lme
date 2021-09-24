@@ -110,11 +110,8 @@ namespace ml_lme
         void Update()
         {
             m_trackigMode = TrackingMode.Generic;
-            if(m_fbtIK != null)
-            {
-                if(m_fbtIK.enabled)
-                    m_trackigMode = TrackingMode.FBT;
-            }
+            if((m_fbtIK != null) && m_fbtIK.enabled)
+                m_trackigMode = TrackingMode.FBT;
 
             if((m_playableController != null) && (m_parameters.Count != 0) && m_updateParameters)
             {

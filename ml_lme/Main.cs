@@ -170,11 +170,8 @@ namespace ml_lme
         void OnAvatarInstantiated(VRCAvatarManager f_avatarManager, VRC.Core.ApiAvatar f_apiAvatar, GameObject f_avatarObject)
         {
             var l_player = f_avatarObject.transform.root.GetComponent<VRCPlayer>();
-            if((l_player != null) && (l_player == Utils.GetLocalPlayer()))
-            {
-                if(m_localTracked != null)
-                    m_localTracked.ResetParameters();
-            }
+            if((l_player != null) && (l_player == Utils.GetLocalPlayer()) && (m_localTracked != null))
+                m_localTracked.ResetParameters();
         }
 
         static void ReorientateLeapToUnity(ref Vector3 f_pos, ref Quaternion f_rot)
